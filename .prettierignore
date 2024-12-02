@@ -1,0 +1,11 @@
+build/*
+dist/*
+public/*
+**/out/*
+**/node_modules/*
+.gitlab
+.vscode
+coverage
+
+package-lock.json
+
