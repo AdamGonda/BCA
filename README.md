@@ -6,11 +6,11 @@
 
 [x] Egészítsd ki az alkalmazást, hogy az "Add to Menu" gombra kattintva a form értéke hozzáadódjon a lenti táblázathoz, majd ürítse ki az input mezőket
 
-[ ] A táblázat sorai naponként összegezve tartalmazzák a vendégek nevét, akik aznap étkezést kapnak
+[x] A táblázat sorai naponként összegezve tartalmazzák a vendégek nevét, akik aznap étkezést kapnak
 
    - Egy vendég minden napra kap reggelit, ebédet és vacsorát, amíg a hotelben tartózkodik
 
-[ ] Implementáld az API integrációt tetszőleges technológiával:
+[x] Implementáld az API integrációt tetszőleges technológiával:
    - A vendégek étkeztetésének listáját töltsd be a db.json-ből a JSON Server-t használva
    - Az "Add to Menu" gombra kattintva a form értéke mentődjön el a db.json-ben a JSON Server-t használva
 
