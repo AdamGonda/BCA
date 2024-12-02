@@ -6,51 +6,21 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { useEffect, useState } from 'react';
-import { eachDayOfInterval, format } from 'date-fns';
-import { Guest } from '@/types/Guest';
-
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import { useQuery } from '@tanstack/react-query';
+import { getGuests, QUERY_KEY } from '@/api/guestService';
+import { guestsToFoodSchedule } from '@/mappers/guestsToFoodSchedule';
 
 export default function MealSchedule() {
-	const [foodSchedule, setFoodSchedule] = useState<Record<string, string[]>>({});
+	const {
+		data,
+		isLoading,
+		isError,
+	} = useQuery({
+		queryKey: [QUERY_KEY],
+		queryFn: getGuests,
+	});
 
-	useEffect(() => {
-		async function fetchData() {
-			const response = await fetch(backendUrl + '/guests');
-			const data = await response.json();
-			setFoodSchedule(getFoodSchedule(data));
-		}
-
-		try {
-			fetchData();
-		} catch (error) {
-			console.error(error);
-		}
-	}, []);
-
-	function getFoodSchedule(guests: Guest[]) {
-		const map: Record<string, string[]> = {};
-
-		guests.forEach((guest) => {
-			const { name, startDate, endDate } = guest;
-
-			const dates = eachDayOfInterval({ start: new Date(startDate), end: new Date(endDate) });
-
-			dates.forEach((date) => {
-				const formattedDate = format(date, 'yyyy-MM-dd');
-
-				if (!map[formattedDate]) {
-					map[formattedDate] = [];
-				}
-				map[formattedDate].push(name);
-			});
-		});
-
-		return map;
-	}
-
-	const showSchedule = Object.keys(foodSchedule).length > 0;
+	const foodSchedule = guestsToFoodSchedule(data);
 
 	return (
 		<div className="mx-auto mt-10 w-full overflow-hidden rounded-lg border border-gray-200 shadow-lg">
@@ -64,10 +34,17 @@ export default function MealSchedule() {
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{showSchedule &&
-						Object.entries(foodSchedule).map(([date, names]) => (
-							<Day key={date} date={date} names={names} />
-						))}
+					{isLoading && (
+						<TableRow className="col-span-4 animate-pulse">
+							<TableCell colSpan={4}>
+								<p className="text-center">Loading...</p>
+							</TableCell>
+						</TableRow>
+					)}
+					{isError && <p className="text-red-500">Error happened</p>}
+					{Object.entries(foodSchedule).map(([date, names]) => (
+						<Day key={date} date={date} names={names} />
+					))}
 				</TableBody>
 			</Table>
 		</div>
@@ -99,7 +76,7 @@ function Day({ date, names }: { date: string; names: string[] }) {
 
 function Names({ names }: { names: string[] }) {
 	return (
-		<ul className='flex flex-col gap-1'>
+		<ul className="flex flex-col gap-1">
 			{names.map((name) => (
 				<li key={name}>{name}</li>
 			))}

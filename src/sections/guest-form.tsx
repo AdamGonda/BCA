@@ -2,36 +2,28 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DatePicker } from '@/components/ui/date-picker';
-
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { addGuest, QUERY_KEY } from '@/api/guestService';
 
 export default function GuestForm() {
 	const [name, setName] = useState('');
 	const [startDate, setStartDate] = useState<Date | undefined>();
 	const [endDate, setEndDate] = useState<Date | undefined>();
+	const queryClient = useQueryClient();
 
-	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-		e.preventDefault();
-		
-		const response = await fetch(backendUrl + '/guests', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				name,
-				startDate,
-				endDate,
-			}),
-		});
-
-		if (response.ok) {
+	const guests = useMutation({
+		mutationFn: addGuest,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
 			setName('');
 			setStartDate(undefined);
 			setEndDate(undefined);
-		} else {
-			console.error(response.statusText);
-		}
+		},
+	});
+
+	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+		e.preventDefault();
+		guests.mutate({ name, startDate: startDate!, endDate: endDate! });
 	}
 
 	return (
@@ -61,7 +53,7 @@ export default function GuestForm() {
 					/>
 				</div>
 				<div className="flex w-full justify-center">
-					<Button type="submit" data-test-id="submit-button" className="w-1/2">
+					<Button type="submit" data-test-id="submit-button" className="w-1/2" disabled={guests.isPending}>
 						Add to Menu
 					</Button>
 				</div>
