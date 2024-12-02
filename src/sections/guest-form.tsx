@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { DatePicker } from '@/components/ui/date-picker';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { addGuest, QUERY_KEY } from '@/api/guestService';
+import { toast } from 'sonner';
 
 export default function GuestForm() {
 	const [name, setName] = useState('');
@@ -23,6 +24,12 @@ export default function GuestForm() {
 
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
+
+		if (!name || !startDate || !endDate) {
+			toast.error('Please fill all fields');
+			return;
+		}
+
 		guests.mutate({ name, startDate: startDate!, endDate: endDate! });
 	}
 

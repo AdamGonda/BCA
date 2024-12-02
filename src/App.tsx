@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from "@/components/ui/sonner"
 
 import GuestForm from './sections/guest-form';
 import MealSchedule from './sections/meal-schedule';
@@ -14,6 +15,7 @@ function App() {
 					<MealSchedule />
 				</div>
 			</div>
+			<Toaster richColors position="top-center" />
 		</QueryClientProvider>
 	);
 }
