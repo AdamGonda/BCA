@@ -99,7 +99,7 @@ function Day({ date, names }: { date: string; names: string[] }) {
 
 function Names({ names }: { names: string[] }) {
 	return (
-		<ul>
+		<ul className='flex flex-col gap-1'>
 			{names.map((name) => (
 				<li key={name}>{name}</li>
 			))}
