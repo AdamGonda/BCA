@@ -5,11 +5,14 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { addGuest, QUERY_KEY } from '@/api/guestService';
 import { toast } from 'sonner';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function GuestForm() {
 	const [name, setName] = useState('');
 	const [startDate, setStartDate] = useState<Date | undefined>();
 	const [endDate, setEndDate] = useState<Date | undefined>();
+	const [hasAnyAllergies, setHasAnyAllergies] = useState(false);
+
 	const queryClient = useQueryClient();
 
 	const guests = useMutation({
@@ -19,6 +22,7 @@ export default function GuestForm() {
 			setName('');
 			setStartDate(undefined);
 			setEndDate(undefined);
+			setHasAnyAllergies(false);
 		},
 	});
 
@@ -30,7 +34,11 @@ export default function GuestForm() {
 			return;
 		}
 
-		guests.mutate({ name, startDate: startDate!, endDate: endDate! });
+		guests.mutate({ name, startDate: startDate!, endDate: endDate!, hasAnyAllergies });
+	}
+
+	function handleCheckedChange(checked: boolean) {
+		setHasAnyAllergies(checked);
 	}
 
 	return (
@@ -58,9 +66,27 @@ export default function GuestForm() {
 						placeholder="End Date"
 						className="flex-1"
 					/>
+					<div className="flex items-center gap-1">
+						<Checkbox
+							id="allergy"
+							checked={hasAnyAllergies}
+							onCheckedChange={handleCheckedChange}
+						/>
+						<label
+							htmlFor="allergy"
+							className="cursor-pointer select-none text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+						>
+							Has any allergies?
+						</label>
+					</div>
 				</div>
 				<div className="flex w-full justify-center">
-					<Button type="submit" data-test-id="submit-button" className="w-1/2" disabled={guests.isPending}>
+					<Button
+						type="submit"
+						data-test-id="submit-button"
+						className="w-1/2"
+						disabled={guests.isPending}
+					>
 						Add to Menu
 					</Button>
 				</div>

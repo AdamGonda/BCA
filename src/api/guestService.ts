@@ -6,7 +6,7 @@ export const QUERY_KEY = 'food-schedule';
 
 export async function getGuests() {
 	// simulate network delay
-	await new Promise((resolve) => setTimeout(resolve, 1000));
+	// await new Promise((resolve) => setTimeout(resolve, 1000));
 
 	try {
 		const response = await fetch(`${BACKEND_URL}/${resource}`);
@@ -23,7 +23,7 @@ export async function getGuests() {
 	}
 }
 
-export async function addGuest({ name, startDate, endDate }: Guest) {
+export async function addGuest({ name, startDate, endDate, hasAnyAllergies }: Guest) {
 	try {
 		await fetch(`${BACKEND_URL}/${resource}`, {
 			method: 'POST',
@@ -34,6 +34,7 @@ export async function addGuest({ name, startDate, endDate }: Guest) {
 				name,
 				startDate,
 				endDate,
+				hasAnyAllergies,
 			}),
 		});
 	} catch (error) {
